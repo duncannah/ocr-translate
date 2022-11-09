@@ -41,6 +41,12 @@
 				"jest": true
 			},
 			"rules": {}
+		},
+		{
+			"files": ["*.jsx", "*.tsx"],
+			"rules": {
+				"react/jsx-curly-brace-presence": ["warn", "always"]
+			}
 		}
 	]
 }
