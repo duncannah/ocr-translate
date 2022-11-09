@@ -1,0 +1,73 @@
+{
+	"name": "webextension",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "apps/webextension/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/webpack:webpack",
+			"outputs": ["{options.outputPath}"],
+			"defaultConfiguration": "production",
+			"options": {
+				"compiler": "babel",
+				"outputPath": "dist/apps/webextension",
+				"index": "apps/webextension/src/index.html",
+				"baseHref": "/",
+				"main": "apps/webextension/src/main.tsx",
+				"polyfills": "apps/webextension/src/polyfills.ts",
+				"tsConfig": "apps/webextension/tsconfig.app.json",
+				"assets": ["apps/webextension/src/manifest.json", "apps/webextension/src/assets"],
+				"styles": ["apps/webextension/src/styles.scss"],
+				"scripts": [],
+				"webpackConfig": "apps/webextension/custom-webpack.config.js"
+			},
+			"configurations": {
+				"development": {
+					"extractLicenses": false,
+					"optimization": false,
+					"sourceMap": true,
+					"vendorChunk": true
+				},
+				"production": {
+					"fileReplacements": [
+						{
+							"replace": "apps/webextension/src/environments/environment.ts",
+							"with": "apps/webextension/src/environments/environment.prod.ts"
+						}
+					],
+					"optimization": false,
+					"outputHashing": "none",
+					"sourceMap": false,
+					"namedChunks": false,
+					"extractLicenses": false,
+					"vendorChunk": false
+				}
+			}
+		},
+		"serve": {
+			"executor": "@nrwl/webpack:dev-server",
+			"defaultConfiguration": "development",
+			"options": {
+				"buildTarget": "webextension:build",
+				"hmr": true
+			},
+			"configurations": {
+				"development": {
+					"buildTarget": "webextension:build:development"
+				},
+				"production": {
+					"buildTarget": "webextension:build:production",
+					"hmr": false
+				}
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["apps/webextension/**/*.{ts,tsx,js,jsx}"]
+			}
+		}
+	},
+	"tags": []
+}

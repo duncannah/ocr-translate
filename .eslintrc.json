@@ -1,0 +1,46 @@
+{
+	"root": true,
+	"ignorePatterns": ["**/*"],
+	"plugins": ["@nrwl/nx"],
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+			"rules": {
+				"@nrwl/nx/enforce-module-boundaries": [
+					"error",
+					{
+						"enforceBuildableLibDependency": true,
+						"allow": [],
+						"depConstraints": [
+							{
+								"sourceTag": "*",
+								"onlyDependOnLibsWithTags": ["*"]
+							}
+						]
+					}
+				],
+				"quotes": ["warn", "backtick"]
+			}
+		},
+		{
+			"files": ["*.ts", "*.tsx"],
+			"extends": ["plugin:@nrwl/nx/typescript"],
+			"rules": {
+				"quotes": "off",
+				"@typescript-eslint/quotes": ["warn", "backtick"]
+			}
+		},
+		{
+			"files": ["*.js", "*.jsx"],
+			"extends": ["plugin:@nrwl/nx/javascript"],
+			"rules": {}
+		},
+		{
+			"files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+			"env": {
+				"jest": true
+			},
+			"rules": {}
+		}
+	]
+}

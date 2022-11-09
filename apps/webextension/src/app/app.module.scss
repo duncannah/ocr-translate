@@ -1,0 +1,38 @@
+.container {
+	&,
+	&:before,
+	&:after,
+	*,
+	*:before,
+	*:after {
+		box-sizing: border-box;
+	}
+
+	font-family: --apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+	text-rendering: geometricPrecision;
+
+	position: fixed;
+	width: 400px;
+	min-height: 200px;
+
+	background: #29272c;
+	color: #fff;
+	border: 1px solid #000000;
+	box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.12);
+	border-radius: 10px;
+	user-select: none;
+
+	overflow: auto;
+
+	.top {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+
+		background: #37373a;
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 14px;
+		height: 30px;
+		font-weight: bold;
+	}
+}
