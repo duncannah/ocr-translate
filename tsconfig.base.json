@@ -14,7 +14,9 @@
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
-		"paths": {},
+		"paths": {
+			"@ocr-translate/shared": ["libs/shared/src/index.ts"]
+		},
 		"strict": true
 	},
 	"exclude": ["node_modules", "tmp"]

@@ -1,0 +1,27 @@
+.area {
+	position: absolute;
+	background: rgba(0, 0, 0, 0.5);
+	border: 2px solid #000000;
+	border-radius: 4px;
+
+	box-sizing: border-box;
+
+	color: #fff;
+	display: grid;
+	align-content: center;
+	justify-content: center;
+	font-family: sans-serif;
+	user-select: none;
+	overflow: hidden;
+
+	&.selected {
+		border-color: lime;
+		box-shadow: inset 0 0 5px lime;
+		z-index: 2147483647 - 2;
+	}
+
+	span {
+		$shadow: rgba(0, 0, 0, 0.5);
+		filter: drop-shadow(1px 0 0 $shadow) drop-shadow(0 1px 0 $shadow) drop-shadow(-1px 0 0 $shadow) drop-shadow(0 -1px 0 $shadow);
+	}
+}

@@ -1,0 +1,31 @@
+.drawingArea {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2147483647;
+	cursor: crosshair;
+	font-family: sans-serif;
+	font-weight: 900;
+	letter-spacing: 0.05em;
+	background: rgba(0, 0, 0, 0.25);
+
+	&:not(.isDrawing) {
+		&::before {
+			content: "Click and drag to select an area to scan";
+			white-space: pre;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 4vw;
+			color: rgba(255, 255, 255, 0.8);
+			transform: rotate(-5deg);
+		}
+	}
+}
