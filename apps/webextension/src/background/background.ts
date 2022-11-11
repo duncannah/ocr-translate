@@ -23,6 +23,8 @@ chrome.contextMenus.onClicked.addListener((_, tab) => injectContentScript(tab?.i
 chrome.action.onClicked.addListener((tab) => injectContentScript(tab.id ?? 0));
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+	console.log(request, sender, sendResponse);
+
 	chrome.tabs.captureVisibleTab().then((dataURI) => {
 		sendResponse({ dataURI });
 	});
