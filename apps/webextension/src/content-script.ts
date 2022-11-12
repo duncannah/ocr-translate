@@ -5,13 +5,10 @@ import * as ReactDOM from "react-dom/client";
 import App from "./interface/app";
 
 (async () => {
-	if (`__OCRTRANSLATE__` in window) return;
-
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	window[`__OCRTRANSLATE__`] = true;
+	if (document.getElementById(`__OCRTRANSLATE__`)) return;
 
 	const el = document.createElement(`div`);
+	el.id = `__OCRTRANSLATE__`;
 	const shadowRoot = el.attachShadow({ mode: `open` });
 
 	shadowRoot.innerHTML = `<link rel="stylesheet" type="text/css" href="${chrome.runtime.getURL(`content-script.css`)}"></link><div id='root'></div>`;
