@@ -31,5 +31,7 @@ import App from "./interface/app";
 		const root = ReactDOM.createRoot(rootEl);
 
 		root.render(React.createElement(StrictMode, {}, React.createElement(App)));
+
+		setTimeout(() => shadowRoot.querySelectorAll(`style`).forEach((el) => el instanceof HTMLStyleElement && (el.disabled = true)), 500);
 	}
 })();
