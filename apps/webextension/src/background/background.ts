@@ -1,3 +1,6 @@
+import API from "./api";
+import { MessageType, ResponseType } from "./message";
+
 chrome.runtime.onInstalled.addListener(() => {
 	chrome.contextMenus.create({
 		id: `start`,
@@ -22,13 +25,26 @@ chrome.contextMenus.onClicked.addListener((_, tab) => injectContentScript(tab?.i
 
 chrome.action.onClicked.addListener((tab) => injectContentScript(tab.id ?? 0));
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-	console.log(request, sender, sendResponse);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse: (response: ResponseType) => void) => {
+	(async () => {
+		switch (request.type) {
+			case MessageType.CaptureTabRequest: {
+				const dataURI = await chrome.tabs.captureVisibleTab();
 
-	chrome.tabs.captureVisibleTab().then((dataURI) => {
-		sendResponse({ dataURI });
+				return sendResponse({ type: MessageType.CaptureTabResponse, dataURI });
+			}
+
+			case MessageType.doOCRRequest: {
+				const text = await API.callPost<string>(`ocr`, { dataURI: request.dataURI });
+
+				return sendResponse({ type: MessageType.doOCRResponse, text });
+			}
+		}
+
+		throw new Error(`Unknown message type`);
+	})().catch((error) => {
+		sendResponse({ type: MessageType.Error, error: error.message });
 	});
 
-	console.log(sender.tab ? `from a content script:` + sender.tab.url : `from the extension`);
 	return true;
 });

@@ -1,14 +1,16 @@
-import { LoadingIcon } from "../icons";
-import { Area } from "@ocr-translate/shared";
+import { ErrorIcon, LoadingIcon } from "../icons";
+import { AreaContainer } from "../utils/area";
 
 import styles from "./AreasRenderer.module.scss";
 
 interface AreaElementProps {
-	area: Area;
+	container: AreaContainer;
 	isSelected: boolean;
 }
 
-function AreaElement({ area, isSelected }: AreaElementProps) {
+function AreaElement({ container, isSelected }: AreaElementProps) {
+	const { area, error } = container;
+
 	return (
 		<div
 			className={`${styles[`area`]} ${isSelected ? styles[`selected`] : ``}`}
@@ -18,25 +20,21 @@ function AreaElement({ area, isSelected }: AreaElementProps) {
 				width: `${area.width}px`,
 				height: `${area.height}px`,
 			}}>
-			{area.translated ?? area.original ?? (
-				<span>
-					<LoadingIcon />
-				</span>
-			)}
+			<span>{area.translated ?? area.original ?? (error ? <ErrorIcon /> : <LoadingIcon />)}</span>
 		</div>
 	);
 }
 
 interface AreasRendererProps {
-	areas: Area[];
+	areas: AreaContainer[];
 	selectedArea: number;
 }
 
 export function AreasRenderer({ areas, selectedArea }: AreasRendererProps) {
 	return (
 		<>
-			{areas.map((area, i) => (
-				<AreaElement key={i} isSelected={selectedArea === i} {...{ area }} />
+			{areas.map((container) => (
+				<AreaElement key={container.id} container={container} isSelected={Number(container.id) === selectedArea} />
 			))}
 		</>
 	);

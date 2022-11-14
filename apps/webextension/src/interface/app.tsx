@@ -1,8 +1,10 @@
 import React from "react";
+import { useImmer } from "use-immer";
 import { Area, translationServices } from "@ocr-translate/shared";
 import { AreaDrawingArea } from "./components/AreaDrawingArea";
 import { AreasRenderer } from "./components/AreasRenderer";
 import { useDraggable } from "./hooks/useDraggable";
+import { AreaContainer, OCROnArea } from "./utils/area";
 import { PlusIcon, XIcon } from "./icons";
 
 import styles from "./app.module.scss";
@@ -15,31 +17,75 @@ enum AppMode {
 export function App() {
 	const [mode, setMode] = React.useState(AppMode.Idle);
 	const [isDrawing, setIsDrawing] = React.useState(false);
-	const [areas, setAreas] = React.useState<Area[]>([]);
+	const [areas, setAreas] = useImmer<AreaContainer[]>([]);
 	const [selectedArea, setSelectedArea] = React.useState<number>(-1);
+
+	const element = React.useRef<HTMLDivElement>(null);
 
 	const draggable = useDraggable();
 
 	const startDrawing = () => {
 		setMode(AppMode.Draw);
-		setSelectedArea(areas.length);
+		setSelectedArea(new Date().getTime());
+	};
+
+	const startCapturing = (id: number, area: Area) => {
+		element.current?.style.setProperty(`opacity`, `0`);
+
+		window.requestAnimationFrame(() =>
+			window.requestAnimationFrame(async () => {
+				try {
+					const [captured, ocrd] = OCROnArea(area);
+
+					await captured;
+
+					element.current?.style.setProperty(`opacity`, `1`);
+
+					const text = await ocrd;
+
+					setAreas((areas) => {
+						const area = areas.find((a) => a.id === id);
+						area && (area.area.original = text);
+					});
+				} catch (e) {
+					console.error(e);
+
+					setAreas((areas) => {
+						const area = areas.find((a) => a.id === id);
+						area && (area.error = String(e));
+					});
+
+					element.current?.style.setProperty(`opacity`, `1`);
+				}
+			}),
+		);
 	};
 
 	const addArea = (area: Area) => {
-		setAreas((areas) => [...areas, area]);
+		setAreas((areas) => {
+			areas.push({
+				id: selectedArea,
+				area,
+			});
+		});
+
+		startCapturing(selectedArea, area);
 
 		setMode(AppMode.Idle);
 	};
 
 	const removeCurrentArea = () => {
-		setAreas((areas) => areas.filter((_, i) => i !== selectedArea));
+		setAreas((areas) => {
+			delete areas[selectedArea];
 
-		if (areas.length === 1) setSelectedArea(-1);
-		else if (selectedArea === areas.length - 1) setSelectedArea(selectedArea - 1);
+			const keys = Object.keys(areas).sort((a, b) => parseInt(a) - parseInt(b));
+			const index = keys.indexOf(selectedArea.toString());
+			setSelectedArea(parseInt(keys[index + 1] || keys[index - 1] || `-1`));
+		});
 	};
 
 	return (
-		<>
+		<div ref={element}>
 			{mode === AppMode.Draw && <AreaDrawingArea {...{ addArea, isDrawing, setIsDrawing }} />}
 
 			<div className={styles[`container`]} style={{ visibility: isDrawing ? `hidden` : `visible` }}>
@@ -75,7 +121,7 @@ export function App() {
 			</div>
 
 			<AreasRenderer {...{ areas, selectedArea }} />
-		</>
+		</div>
 	);
 }
 

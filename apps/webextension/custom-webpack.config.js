@@ -1,3 +1,4 @@
+const { DefinePlugin } = require("webpack");
 const { merge } = require("webpack-merge");
 
 module.exports = (config, context) => {
@@ -6,5 +7,10 @@ module.exports = (config, context) => {
 		optimization: {
 			runtimeChunk: false,
 		},
+		plugins: [
+			new DefinePlugin({
+				PORT: process.env.port || 45490,
+			}),
+		],
 	});
 };

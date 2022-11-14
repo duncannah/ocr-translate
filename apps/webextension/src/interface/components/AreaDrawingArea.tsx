@@ -65,11 +65,14 @@ export function AreaDrawingArea({ addArea, isDrawing, setIsDrawing }: AreaDrawin
 				<AreasRenderer
 					areas={[
 						{
-							x: Math.min(coords.startX, coords.endX),
-							y: Math.min(coords.startY, coords.endY),
-							width: Math.abs(coords.startX - coords.endX),
-							height: Math.abs(coords.startY - coords.endY),
-							original: ``,
+							id: 0,
+							area: {
+								x: Math.min(coords.startX, coords.endX),
+								y: Math.min(coords.startY, coords.endY),
+								width: Math.abs(coords.startX - coords.endX),
+								height: Math.abs(coords.startY - coords.endY),
+								original: ``,
+							},
 						},
 					]}
 					selectedArea={0}

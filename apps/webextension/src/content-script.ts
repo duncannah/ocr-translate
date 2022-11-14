@@ -15,13 +15,6 @@ import App from "./interface/app";
 
 	document.body.append(el);
 
-	chrome.runtime.sendMessage({ greeting: `hello` }, function (response) {
-		const img = new Image();
-		img.src = response.dataURI;
-
-		document.body.append(img);
-	});
-
 	const rootEl = shadowRoot.getElementById(`root`);
 
 	if (rootEl) {

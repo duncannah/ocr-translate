@@ -26,5 +26,6 @@
 			"resources": ["content-script.css"]
 		}
 	],
-	"permissions": ["storage", "activeTab", "scripting", "contextMenus"]
+	"permissions": ["storage", "activeTab", "scripting", "contextMenus"],
+	"host_permissions": ["http://localhost:*/*"]
 }
