@@ -20,7 +20,7 @@ function AreaElement({ container, isSelected }: AreaElementProps) {
 				width: `${area.width}px`,
 				height: `${area.height}px`,
 			}}>
-			<span>{area.translated ?? area.original ?? (error ? <ErrorIcon /> : <LoadingIcon />)}</span>
+			<span>{(area.translated || area.original) ?? (error ? <ErrorIcon /> : <LoadingIcon />)}</span>
 		</div>
 	);
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import { useImmer } from "use-immer";
+import { merge } from "lodash-es";
 import { Area, translationServices } from "@ocr-translate/shared";
 import { AreaDrawingArea } from "./components/AreaDrawingArea";
 import { AreasRenderer } from "./components/AreasRenderer";
@@ -82,6 +83,16 @@ export function App() {
 		});
 	};
 
+	const updateDraft = (area: Partial<Area>) => {
+		setAreas((areas) => {
+			areas[selectedArea] = merge(areas[selectedArea], {
+				area,
+			});
+		});
+	};
+
+	const { area } = areas[selectedArea] ?? {};
+
 	return (
 		<div ref={element}>
 			{mode === AppMode.Draw && <AreaDrawingArea {...{ addArea, isDrawing, setIsDrawing }} />}
@@ -102,17 +113,31 @@ export function App() {
 					</div>
 					<div className={styles[`textbox`]}>
 						<div className={styles[`textbox-label`]}>{`Original`}</div>
-						<textarea className={styles[`textarea`]}></textarea>
+						<textarea
+							className={styles[`textarea`]}
+							value={area?.original ?? ``}
+							onChange={(e) =>
+								updateDraft({
+									original: e.target.value,
+								})
+							}></textarea>
 					</div>
 					<div className={styles[`textbox`]}>
 						<div className={styles[`textbox-label`]}>{`Translated`}</div>
-						<textarea className={styles[`textarea`]}></textarea>
+						<textarea
+							className={styles[`textarea`]}
+							value={area?.translated ?? ``}
+							onChange={(e) =>
+								updateDraft({
+									translated: e.target.value,
+								})
+							}></textarea>
 					</div>
 					<hr />
 					{translationServices.map(([id, name]) => (
 						<div key={id} className={styles[`textbox`]}>
 							<div className={styles[`textbox-label`]}>{name}</div>
-							<textarea className={styles[`textarea`]} disabled></textarea>
+							<textarea className={styles[`textarea`]} disabled value={area?.translations?.[id] ?? ``}></textarea>
 						</div>
 					))}
 				</div>
