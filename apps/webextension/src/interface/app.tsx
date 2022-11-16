@@ -17,7 +17,7 @@ enum AppMode {
 export function App() {
 	const [mode, setMode] = React.useState(AppMode.Idle);
 	const [isDrawing, setIsDrawing] = React.useState(false);
-	const [areas, setAreas] = useImmer<AreaContainer[]>([]);
+	const [areas, setAreas] = useImmer<Record<number, AreaContainer>>({});
 	const [selectedArea, setSelectedArea] = React.useState<number>(-1);
 
 	const element = React.useRef<HTMLDivElement>(null);
@@ -37,25 +37,22 @@ export function App() {
 				try {
 					const [captured, ocrd] = OCROnArea(area);
 
-					await captured;
-
-					element.current?.style.setProperty(`opacity`, `1`);
+					captured.finally(() => {
+						element.current?.style.setProperty(`opacity`, `1`);
+					});
 
 					const text = await ocrd;
 
 					setAreas((areas) => {
-						const area = areas.find((a) => a.id === id);
-						area && (area.area.original = text);
+						areas[id].area.translated = text;
+						delete areas[id].error;
 					});
 				} catch (e) {
 					console.error(e);
 
 					setAreas((areas) => {
-						const area = areas.find((a) => a.id === id);
-						area && (area.error = String(e));
+						areas[id].error = String(e);
 					});
-
-					element.current?.style.setProperty(`opacity`, `1`);
 				}
 			}),
 		);
@@ -63,10 +60,10 @@ export function App() {
 
 	const addArea = (area: Area) => {
 		setAreas((areas) => {
-			areas.push({
+			areas[selectedArea] = {
 				id: selectedArea,
 				area,
-			});
+			};
 		});
 
 		startCapturing(selectedArea, area);
@@ -76,11 +73,12 @@ export function App() {
 
 	const removeCurrentArea = () => {
 		setAreas((areas) => {
-			delete areas[selectedArea];
+			const keys = Object.keys(areas);
+			const index = keys.indexOf(String(selectedArea));
 
-			const keys = Object.keys(areas).sort((a, b) => parseInt(a) - parseInt(b));
-			const index = keys.indexOf(selectedArea.toString());
-			setSelectedArea(parseInt(keys[index + 1] || keys[index - 1] || `-1`));
+			setSelectedArea(Number(keys[index + 1] ?? keys[index - 1] ?? -1));
+
+			delete areas[selectedArea];
 		});
 	};
 
@@ -120,7 +118,7 @@ export function App() {
 				</div>
 			</div>
 
-			<AreasRenderer {...{ areas, selectedArea }} />
+			<AreasRenderer {...{ areas: Object.values(areas), selectedArea }} />
 		</div>
 	);
 }
