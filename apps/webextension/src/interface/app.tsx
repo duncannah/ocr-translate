@@ -143,7 +143,7 @@ export function App() {
 				</div>
 			</div>
 
-			<AreasRenderer {...{ areas: Object.values(areas), selectedArea }} />
+			<AreasRenderer {...{ areas: Object.values(areas), setSelectedArea, selectedArea }} />
 		</div>
 	);
 }
