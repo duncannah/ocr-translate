@@ -41,7 +41,7 @@ function TextBox({ name, areaKey, value, updateCurrentArea }: TextBoxProps) {
 			<div className={styles[`textbox-label`]}>{name}</div>
 			<textarea
 				className={styles[`textarea`]}
-				value={value}
+				value={value ?? ``}
 				onChange={(e) => {
 					updateCurrentArea &&
 						updateCurrentArea({
@@ -129,6 +129,8 @@ export function App() {
 	};
 
 	const updateCurrentArea = (area: Partial<Area>) => {
+		if (selectedArea === -1) return;
+
 		setAreas((areas) => {
 			areas[selectedArea] = merge(areas[selectedArea], {
 				area,
@@ -172,11 +174,11 @@ export function App() {
 							</button>
 						</div>
 					</div>
-					<TextBox name={`Original`} areaKey={`original`} value={area?.original} updateCurrentArea={updateCurrentArea} />
-					<TextBox name={`Translated`} areaKey={`translated`} value={area?.translated} updateCurrentArea={updateCurrentArea} />
+					<TextBox name={`Original`} areaKey={`original`} value={area?.original ?? ``} updateCurrentArea={updateCurrentArea} />
+					<TextBox name={`Translated`} areaKey={`translated`} value={area?.translated ?? ``} updateCurrentArea={updateCurrentArea} />
 					<hr />
 					{translationServices.map(([id, name]) => (
-						<TextBox areaKey={id} name={name} value={area?.translations?.[id]} />
+						<TextBox key={id} areaKey={id} name={name} value={area?.translations?.[id]} />
 					))}
 				</div>
 			</div>
