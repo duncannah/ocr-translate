@@ -24,7 +24,7 @@ function AreaElement({ container, isSelected, handleClick }: AreaElementProps) {
 				height: `${area.height}px`,
 			}}
 			onClick={handleClick}>
-			<span>{(area.translated || area.original) ?? (error ? <ErrorIcon /> : <LoadingIcon />)}</span>
+			<span>{(area.translated || area.original || area.translated) ?? (error ? <ErrorIcon /> : <LoadingIcon />)}</span>
 		</div>
 	);
 }

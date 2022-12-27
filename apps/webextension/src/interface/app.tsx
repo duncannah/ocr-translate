@@ -15,6 +15,47 @@ enum AppMode {
 	Draw,
 }
 
+interface TextBoxProps {
+	name: string;
+	areaKey: string;
+	value?: string;
+	updateCurrentArea?: (area: Partial<Area>) => void;
+}
+
+function TextBox({ name, areaKey, value, updateCurrentArea }: TextBoxProps) {
+	const ref = React.useRef<HTMLTextAreaElement>(null);
+
+	React.useEffect(() => {
+		if (!ref.current) return;
+
+		// Don't let the page override default behavior
+		// [`input`].forEach((eventName) => {
+		// 	ref.current?.addEventListener(eventName, (event) => {
+		// 		event.stopPropagation();
+		// 	});
+		// });
+	}, []);
+
+	return (
+		<div className={styles[`textbox`]}>
+			<div className={styles[`textbox-label`]}>{name}</div>
+			<textarea
+				className={styles[`textarea`]}
+				value={value}
+				onChange={(e) => {
+					updateCurrentArea &&
+						updateCurrentArea({
+							[areaKey]: e.target.value,
+						});
+
+					e.stopPropagation();
+				}}
+				ref={ref}
+			/>
+		</div>
+	);
+}
+
 export function App() {
 	const [mode, setMode] = React.useState(AppMode.Idle);
 	const [isDrawing, setIsDrawing] = React.useState(false);
@@ -32,6 +73,10 @@ export function App() {
 
 	const startCapturing = (id: number, area: Area) => {
 		element.current?.style.setProperty(`opacity`, `0`);
+
+		setAreas((areas) => {
+			delete areas[id].error;
+		});
 
 		window.requestAnimationFrame(() =>
 			window.requestAnimationFrame(async () => {
@@ -83,7 +128,7 @@ export function App() {
 		});
 	};
 
-	const updateDraft = (area: Partial<Area>) => {
+	const updateCurrentArea = (area: Partial<Area>) => {
 		setAreas((areas) => {
 			areas[selectedArea] = merge(areas[selectedArea], {
 				area,
@@ -111,34 +156,11 @@ export function App() {
 							<PlusIcon /> {`Add`}
 						</button>
 					</div>
-					<div className={styles[`textbox`]}>
-						<div className={styles[`textbox-label`]}>{`Original`}</div>
-						<textarea
-							className={styles[`textarea`]}
-							value={area?.original ?? ``}
-							onChange={(e) =>
-								updateDraft({
-									original: e.target.value,
-								})
-							}></textarea>
-					</div>
-					<div className={styles[`textbox`]}>
-						<div className={styles[`textbox-label`]}>{`Translated`}</div>
-						<textarea
-							className={styles[`textarea`]}
-							value={area?.translated ?? ``}
-							onChange={(e) =>
-								updateDraft({
-									translated: e.target.value,
-								})
-							}></textarea>
-					</div>
+					<TextBox name={`Original`} areaKey={`original`} value={area?.original} updateCurrentArea={updateCurrentArea} />
+					<TextBox name={`Translated`} areaKey={`translated`} value={area?.translated} updateCurrentArea={updateCurrentArea} />
 					<hr />
 					{translationServices.map(([id, name]) => (
-						<div key={id} className={styles[`textbox`]}>
-							<div className={styles[`textbox-label`]}>{name}</div>
-							<textarea className={styles[`textarea`]} disabled value={area?.translations?.[id] ?? ``}></textarea>
-						</div>
+						<TextBox areaKey={id} name={name} value={area?.translations?.[id]} />
 					))}
 				</div>
 			</div>

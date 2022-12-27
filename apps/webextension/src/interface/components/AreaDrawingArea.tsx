@@ -71,7 +71,7 @@ export function AreaDrawingArea({ addArea, isDrawing, setIsDrawing }: AreaDrawin
 								y: Math.min(coords.startY, coords.endY),
 								width: Math.abs(coords.startX - coords.endX),
 								height: Math.abs(coords.startY - coords.endY),
-								original: ``,
+								translated: ``,
 							},
 						},
 					]}
