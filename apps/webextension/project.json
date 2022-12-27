@@ -44,6 +44,12 @@
 				}
 			}
 		},
+		"watch": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "nx build webextension --watch"
+			}
+		},
 		"serve": {
 			"executor": "@nrwl/webpack:dev-server",
 			"defaultConfiguration": "development",
