@@ -1,7 +1,7 @@
 import React from "react";
 import { useImmer } from "use-immer";
 import { merge } from "lodash-es";
-import { Area, translationServices } from "@ocr-translate/shared";
+import { Area, translationServices, OCRLanguages } from "@ocr-translate/shared";
 import { AreaDrawingArea } from "./components/AreaDrawingArea";
 import { AreasRenderer } from "./components/AreasRenderer";
 import { useDraggable } from "./hooks/useDraggable";
@@ -148,13 +148,29 @@ export function App() {
 				</div>
 
 				<div className={styles[`content`]}>
-					<div className={styles[`actions`]}>
-						<button onClick={removeCurrentArea}>
-							<XIcon /> {`Remove`}
-						</button>
-						<button onClick={startDrawing}>
-							<PlusIcon /> {`Add`}
-						</button>
+					<div className={styles[`options`]}>
+						<div className={styles[`langSelect`]}>
+							<select id={`langSelect-from`}>
+								{Object.entries(OCRLanguages).map(([key, value]) => (
+									<option key={key} value={key}>
+										{value}
+									</option>
+								))}
+							</select>
+							{`→`}
+							<select id={`langSelect-to`}>
+								{/* TODO: Add more languages */}
+								<option value={`en`}>{`English`}</option>
+							</select>
+						</div>
+						<div className={styles[`actions`]}>
+							<button onClick={removeCurrentArea}>
+								<XIcon /> {`Remove`}
+							</button>
+							<button onClick={startDrawing}>
+								<PlusIcon /> {`Add`}
+							</button>
+						</div>
 					</div>
 					<TextBox name={`Original`} areaKey={`original`} value={area?.original} updateCurrentArea={updateCurrentArea} />
 					<TextBox name={`Translated`} areaKey={`translated`} value={area?.translated} updateCurrentArea={updateCurrentArea} />

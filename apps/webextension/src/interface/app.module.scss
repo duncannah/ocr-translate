@@ -13,12 +13,14 @@
 
 	textarea,
 	input,
-	button {
+	button,
+	select {
 		font: inherit;
 		color: inherit;
 	}
 
-	button {
+	button,
+	select {
 		background: #5e5e5e;
 		border: 0;
 		box-shadow: inset 0 1px rgba(255, 255, 255, 0.2);
@@ -83,11 +85,23 @@
 		gap: 0.5em;
 	}
 
-	.actions {
+	.options {
 		display: flex;
-		justify-content: flex-end;
+		flex-direction: row;
+		justify-content: space-between;
 		gap: 0.5em;
-		// font-size: 16px;
+		margin-bottom: 0.5em;
+
+		.langSelect {
+			display: flex;
+			gap: 0.5em;
+		}
+
+		.actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: 0.5em;
+		}
 	}
 
 	.textbox {
