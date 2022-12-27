@@ -7,9 +7,11 @@ export function generateResponse<T>(data: T): ServerResponse<T> {
 	};
 }
 
-export function generateErrorResponse(error: string): ServerResponse<null> {
+export function generateErrorResponse(error: unknown): ServerResponse<null> {
+	console.error(error);
+
 	return {
 		status: 1,
-		error,
+		error: error instanceof Error ? error.message : String(error),
 	};
 }

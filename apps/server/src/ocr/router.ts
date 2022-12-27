@@ -1,12 +1,20 @@
 import * as express from "express";
-import { generateResponse } from "../utils/response";
+import GoogleOCR from "./services/google";
+
+import { generateResponse, generateErrorResponse } from "../utils/response";
+import { Readable } from "stream";
 
 const router = express.Router();
 
-router.post(`/`, (req, res) => {
+router.post(`/`, async (req, res) => {
 	const { dataURI, language } = req.body as { dataURI: string; language: string };
 
-	res.send(generateResponse<string>(`Hello from the server! Length is ${dataURI.length} and language is ${language}`));
+	try {
+		const str = GoogleOCR.recognize(Readable.from(Buffer.from(dataURI.split(`,`)[1], `base64`)), language);
+		res.send(generateResponse<string>(await str));
+	} catch (e) {
+		res.send(generateErrorResponse(e));
+	}
 });
 
 export default router;

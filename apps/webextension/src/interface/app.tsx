@@ -92,7 +92,7 @@ export function App() {
 						const text = await ocrd;
 
 						setAreas((areas) => {
-							areas[id].area.translated = text;
+							areas[id].area.original = text;
 							delete areas[id].error;
 						});
 					} catch (e) {

@@ -95,7 +95,7 @@ class GoogleOCRService implements OCR {
 		}
 	};
 
-	public recognize = async (image: Buffer, language: string): Promise<string> => {
+	public recognize = async (image: unknown, language: string): Promise<string> => {
 		if (!this.isReady) throw new Error(`Not authorized yet`);
 		if (!this.drive) throw new Error(`No drive client`);
 
