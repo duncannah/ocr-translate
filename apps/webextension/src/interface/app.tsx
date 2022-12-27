@@ -2,6 +2,7 @@ import React from "react";
 import { useImmer } from "use-immer";
 import { merge } from "lodash-es";
 import { Area, translationServices, OCRLanguages } from "@ocr-translate/shared";
+import { MessageType, ResponseType } from "../background/message";
 import { AreaDrawingArea } from "./components/AreaDrawingArea";
 import { AreasRenderer } from "./components/AreasRenderer";
 import { useDraggable } from "./hooks/useDraggable";
@@ -62,6 +63,7 @@ export function App() {
 	const [areas, setAreas] = useImmer<Record<number, AreaContainer>>({});
 	const [selectedArea, setSelectedArea] = React.useState<number>(-1);
 	const [ocrLanguage, setOCRLanguage] = React.useState<keyof typeof OCRLanguages>(``);
+	const [location, setLocation] = React.useState<string>(window.location.href);
 
 	const element = React.useRef<HTMLDivElement>(null);
 
@@ -144,6 +146,34 @@ export function App() {
 			});
 		});
 	};
+
+	React.useEffect(() => {
+		const messageListener: Parameters<typeof chrome.runtime.onMessage.addListener>[0] = (request, sender, sendResponse: (response: ResponseType) => void) => {
+			(async () => {
+				switch (request.type) {
+					case MessageType.HistoryStateUpdated: {
+						setLocation(window.location.href);
+
+						return;
+					}
+				}
+
+				throw new Error(`Unknown message type`);
+			})().catch((error) => {
+				sendResponse({ type: MessageType.Error, error: String(error) });
+			});
+
+			return true;
+		};
+
+		chrome.runtime.onMessage.addListener(messageListener);
+
+		return () => chrome.runtime.onMessage.removeListener(messageListener);
+	});
+
+	React.useEffect(() => {
+		setAreas({});
+	}, [setAreas, location]);
 
 	const { area } = areas[selectedArea] ?? {};
 

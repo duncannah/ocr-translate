@@ -3,6 +3,7 @@ export enum MessageType {
 	CaptureTabResponse,
 	doOCRRequest,
 	doOCRResponse,
+	HistoryStateUpdated,
 	Error,
 }
 
@@ -30,6 +31,10 @@ export interface doOCRResponseMessage extends Message {
 	text: string;
 }
 
+export interface HistoryStateUpdatedMessage extends Message {
+	type: MessageType.HistoryStateUpdated;
+}
+
 export interface ErrorMessage extends Message {
 	type: MessageType.Error;
 	error: string;
@@ -38,7 +43,13 @@ export interface ErrorMessage extends Message {
 type RequestType = CaptureTabRequestMessage | doOCRRequestMessage;
 
 export type ResponseType<Request extends Message = CaptureTabRequestMessage | doOCRRequestMessage> =
-	| (Request extends CaptureTabRequestMessage ? CaptureTabResponseMessage : Request extends doOCRRequestMessage ? doOCRResponseMessage : never)
+	| (Request extends CaptureTabRequestMessage
+			? CaptureTabResponseMessage
+			: Request extends doOCRRequestMessage
+			? doOCRResponseMessage
+			: Request extends HistoryStateUpdatedMessage
+			? HistoryStateUpdatedMessage
+			: never)
 	| ErrorMessage;
 
 export function sendMessageToBackground<Request extends RequestType>(request: Request): Promise<ResponseType<Request>> {

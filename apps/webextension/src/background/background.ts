@@ -48,3 +48,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse: (response: 
 
 	return true;
 });
+
+// Send message when history is updated
+chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+	chrome.tabs.sendMessage(details.tabId, { type: MessageType.HistoryStateUpdated });
+});
