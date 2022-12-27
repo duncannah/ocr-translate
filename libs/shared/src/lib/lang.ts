@@ -1,5 +1,5 @@
 export const OCRLanguages = {
-	"auto": `Auto 🤖`,
+	"": `Auto 🤖`,
 	"af": `Afrikaans`,
 	"sq": `Albanian`,
 	"ar": `Arabic`,
@@ -60,4 +60,4 @@ export const OCRLanguages = {
 	"uk": `Ukrainian`,
 	"vi": `Vietnamese`,
 	"yi": `Yiddish`,
-};
+} as const;

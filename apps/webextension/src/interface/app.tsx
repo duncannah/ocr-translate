@@ -61,6 +61,7 @@ export function App() {
 	const [isDrawing, setIsDrawing] = React.useState(false);
 	const [areas, setAreas] = useImmer<Record<number, AreaContainer>>({});
 	const [selectedArea, setSelectedArea] = React.useState<number>(-1);
+	const [ocrLanguage, setOCRLanguage] = React.useState<keyof typeof OCRLanguages>(``);
 
 	const element = React.useRef<HTMLDivElement>(null);
 
@@ -71,51 +72,57 @@ export function App() {
 		setSelectedArea(new Date().getTime());
 	};
 
-	const startCapturing = (id: number, area: Area) => {
-		element.current?.style.setProperty(`opacity`, `0`);
+	const startCapturing = React.useCallback(
+		(id: number, area: Area, language: typeof ocrLanguage) => {
+			element.current?.style.setProperty(`opacity`, `0`);
 
-		setAreas((areas) => {
-			delete areas[id].error;
-		});
+			setAreas((areas) => {
+				delete areas[id].error;
+			});
 
-		window.requestAnimationFrame(() =>
-			window.requestAnimationFrame(async () => {
-				try {
-					const [captured, ocrd] = OCROnArea(area);
+			window.requestAnimationFrame(() =>
+				window.requestAnimationFrame(async () => {
+					try {
+						const [captured, ocrd] = OCROnArea(area, language);
 
-					captured.finally(() => {
-						element.current?.style.setProperty(`opacity`, `1`);
-					});
+						captured.finally(() => {
+							element.current?.style.setProperty(`opacity`, `1`);
+						});
 
-					const text = await ocrd;
+						const text = await ocrd;
 
-					setAreas((areas) => {
-						areas[id].area.translated = text;
-						delete areas[id].error;
-					});
-				} catch (e) {
-					console.error(e);
+						setAreas((areas) => {
+							areas[id].area.translated = text;
+							delete areas[id].error;
+						});
+					} catch (e) {
+						console.error(e);
 
-					setAreas((areas) => {
-						areas[id].error = String(e);
-					});
-				}
-			}),
-		);
-	};
+						setAreas((areas) => {
+							areas[id].error = String(e);
+						});
+					}
+				}),
+			);
+		},
+		[setAreas],
+	);
 
-	const addArea = (area: Area) => {
-		setAreas((areas) => {
-			areas[selectedArea] = {
-				id: selectedArea,
-				area,
-			};
-		});
+	const addArea = React.useCallback(
+		(area: Area) => {
+			setAreas((areas) => {
+				areas[selectedArea] = {
+					id: selectedArea,
+					area,
+				};
+			});
 
-		startCapturing(selectedArea, area);
+			startCapturing(selectedArea, area, ocrLanguage);
 
-		setMode(AppMode.Idle);
-	};
+			setMode(AppMode.Idle);
+		},
+		[selectedArea, ocrLanguage, setAreas, startCapturing],
+	);
 
 	const removeCurrentArea = () => {
 		setAreas((areas) => {
@@ -152,7 +159,7 @@ export function App() {
 				<div className={styles[`content`]}>
 					<div className={styles[`options`]}>
 						<div className={styles[`langSelect`]}>
-							<select id={`langSelect-from`}>
+							<select id={`langSelect-from`} onChange={(e) => setOCRLanguage(e.target.value as typeof ocrLanguage)} value={ocrLanguage}>
 								{Object.entries(OCRLanguages).map(([key, value]) => (
 									<option key={key} value={key}>
 										{value}

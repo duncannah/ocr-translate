@@ -8,7 +8,7 @@ export interface AreaContainer {
 	error?: string;
 }
 
-export function OCROnArea(area: Area): [Promise<string>, Promise<string>] {
+export function OCROnArea(area: Area, language: string): [Promise<string>, Promise<string>] {
 	const capturePromise = (async () => {
 		const resp = await sendMessageToBackground({
 			type: MessageType.CaptureTabRequest,
@@ -25,6 +25,7 @@ export function OCROnArea(area: Area): [Promise<string>, Promise<string>] {
 		const resp = await sendMessageToBackground({
 			type: MessageType.doOCRRequest,
 			dataURI: croppped,
+			language,
 		});
 
 		if (resp.type === MessageType.Error) throw new Error(`Failed to do OCR: ${resp.error}`);

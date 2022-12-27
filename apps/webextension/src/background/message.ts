@@ -22,6 +22,7 @@ export interface CaptureTabResponseMessage extends Message {
 export interface doOCRRequestMessage extends Message {
 	type: MessageType.doOCRRequest;
 	dataURI: string;
+	language: string;
 }
 
 export interface doOCRResponseMessage extends Message {

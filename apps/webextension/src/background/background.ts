@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse: (response: 
 			}
 
 			case MessageType.doOCRRequest: {
-				const text = await API.callPost<string>(`ocr`, { dataURI: request.dataURI });
+				const text = await API.callPost<string>(`ocr`, { dataURI: request.dataURI, language: request.language });
 
 				return sendResponse({ type: MessageType.doOCRResponse, text });
 			}
